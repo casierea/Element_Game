@@ -1,23 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// controls player movement
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed;
-    private Vector2 direction;
+    public float moveSpeed; 
+    
 
+    // dash stuff 
+    public float activeMoveSpeed;
+    public float dashSpeed;
+    public float dashLength;
+    public float dashCooldown;
+    // dash stuff
+
+    private Vector2 direction;
+    private Rigidbody2D rb;
+    private float dashCounter;
+    private float dashCooldownCounter;
+
+    private void Start() 
+    {
+        activeMoveSpeed = moveSpeed;
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    // updates player each tick
     void Update()
     {
         TakeInput();
         Move();
     }
-
+    
+    // moves player
     private void Move() 
     {
-        transform.Translate(direction * moveSpeed * Time.deltaTime);
+        transform.Translate(direction * activeMoveSpeed * Time.deltaTime);
     }
-
+    // takes in input from player
     private void TakeInput()
     {
         direction = Vector2.zero;
@@ -37,6 +57,30 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             direction += Vector2.right;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (dashCooldownCounter <= 0 && dashCounter <= 0) 
+            {
+                activeMoveSpeed = dashSpeed;
+                dashCounter = dashLength;
+            }
+        }
+
+        if (dashCounter > 0) 
+        {
+            dashCounter -= Time.deltaTime;
+
+            if (dashCounter <= 0 )
+            {
+                activeMoveSpeed = moveSpeed;
+                dashCooldownCounter = 3; // hardcoded for now, will fix later :)
+            }
+        }
+
+        if (dashCooldownCounter > 0)
+        {
+            dashCooldownCounter -= Time.deltaTime;
         }
     }
 }
