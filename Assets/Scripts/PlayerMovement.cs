@@ -35,8 +35,11 @@ public class PlayerMovement : MonoBehaviour
     // moves player
     private void Move() 
     {
+      // Normalize direction to prevent faster movement when moving diagonally
+      direction = direction.normalized;
         transform.Translate(direction * activeMoveSpeed * Time.deltaTime);
     }
+
     // takes in input from player
     private void TakeInput()
     {
